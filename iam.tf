@@ -134,6 +134,30 @@ resource "aws_iam_role_policy" "ecr_required" {
   policy = data.aws_iam_policy_document.ecr_required[count.index].json
 }
 
+data "aws_iam_policy_document" "codeconnection_required" {
+  count = local.has_github_codeconnection_arn ? 1 : 0
+  statement {
+    effect = "Allow"
+    # https://docs.aws.amazon.com/dtconsole/latest/userguide/rename.html
+    actions = startswith(var.github_codeconnection_arn, "arn:aws:codestar-connections:") ? [
+      "codestar-connections:GetConnection",
+      "codestar-connections:GetConnectionToken"
+      ] : [
+      "codeconnections:GetConnection",
+      "codeconnections:GetConnectionToken",
+      "codeconnections:UseConnection"
+    ]
+    resources = [var.github_codeconnection_arn]
+  }
+}
+
+resource "aws_iam_role_policy" "codeconnection_required" {
+  count  = local.has_github_codeconnection_arn ? 1 : 0
+  name   = "${var.name}-codeconnection"
+  role   = local.create_iam_role ? aws_iam_role.this[0].name : var.iam_role_name
+  policy = data.aws_iam_policy_document.codeconnection_required[count.index].json
+}
+
 data "aws_iam_policy_document" "assume_role" {
   count = local.create_iam_role ? 1 : 0
   statement {
