@@ -15,16 +15,6 @@ sections:
 
 
 content: |-
-  ## Module Docs
-
-  ### Basic Example
-  ```hcl
-  {{ include "examples/basic/main.tf" }}
-  ```
-  ### Advanced Example
-  ```hcl
-  {{ include "examples/advanced/main.tf" }}
-  ```
 
   ----
   {{ .Inputs }}
@@ -45,9 +35,6 @@ content: |-
   {{ .Resources }}
 
   ----
-
-  ```
-
 
 output:
   file: README.md
